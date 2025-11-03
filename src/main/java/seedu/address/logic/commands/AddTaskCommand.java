@@ -3,6 +3,8 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_DEADLINE;
 
+import java.util.Objects;
+
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -26,6 +28,8 @@ public class AddTaskCommand extends Command {
     public static final String MESSAGE_DUPLICATE_TASK = "This task already exists in the address book";
 
     private final Task toAdd;
+    // Optional note to append to the success message (e.g., date auto-adjustment notice)
+    private final String postMessageNote;
 
     /**
      * Creates an AddTaskCommand to add the specified {@code Task}
@@ -33,6 +37,17 @@ public class AddTaskCommand extends Command {
     public AddTaskCommand(Task task) {
         requireNonNull(task);
         toAdd = task;
+        this.postMessageNote = null;
+    }
+
+    /**
+     * Creates an AddTaskCommand with an optional note to append to the success message.
+     */
+    public AddTaskCommand(Task task, String postMessageNote) {
+        requireNonNull(task);
+        toAdd = task;
+        this.postMessageNote = (postMessageNote == null || postMessageNote.trim().isEmpty())
+                ? null : postMessageNote;
     }
 
     @Override
@@ -44,7 +59,9 @@ public class AddTaskCommand extends Command {
         }
 
         model.addTask(toAdd);
-        return new CommandResult(String.format(MESSAGE_SUCCESS, Messages.format(toAdd)));
+        String base = String.format(MESSAGE_SUCCESS, Messages.format(toAdd));
+        String message = (postMessageNote == null) ? base : base + "\n\n" + postMessageNote;
+        return new CommandResult(message);
     }
 
     @Override
@@ -59,7 +76,8 @@ public class AddTaskCommand extends Command {
         }
 
         AddTaskCommand otherAddTaskCommand = (AddTaskCommand) other;
-        return toAdd.equals(otherAddTaskCommand.toAdd);
+        return toAdd.equals(otherAddTaskCommand.toAdd)
+                && Objects.equals(postMessageNote, otherAddTaskCommand.postMessageNote);
     }
 
     @Override

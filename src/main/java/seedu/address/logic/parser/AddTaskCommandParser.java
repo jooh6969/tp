@@ -35,21 +35,38 @@ public class AddTaskCommandParser implements Parser<AddTaskCommand> {
             throw new ParseException(Task.MESSAGE_CONSTRAINTS);
         }
 
-        // Parse deadline if present
+        // Parse deadline if present; detect auto-adjustments to inform user
         LocalDateTime deadline = null;
+        String adjustmentNote = null;
         if (argMultimap.getValue(PREFIX_DEADLINE).isPresent()) {
-            String deadlineString = argMultimap.getValue(PREFIX_DEADLINE).get();
+            String deadlineString = argMultimap.getValue(PREFIX_DEADLINE).get().trim();
             if (!Task.isValidDeadline(deadlineString)) {
                 throw new ParseException(Task.DEADLINE_CONSTRAINTS);
             }
             try {
                 deadline = Task.parseDeadline(deadlineString);
+                // Compare normalized input vs formatted parsed to detect auto-adjustment
+                // If input has time, compare full; else compare date-only
+                boolean hasTime = deadlineString.contains(" ");
+                String formattedParsed = hasTime
+                        ? deadline.format(java.time.format.DateTimeFormatter.ofPattern(Task.DATE_TIME_FORMAT))
+                        : deadline.toLocalDate().format(java.time.format.DateTimeFormatter.ofPattern(Task.DATE_FORMAT));
+                String normalizedInput = hasTime ? deadlineString : deadlineString; // already trimmed
+                if (!formattedParsed.equals(normalizedInput)) {
+                    adjustmentNote = String.format(
+                            "Note: Invalid date '%s' adjusted to '%s'.",
+                            deadlineString,
+                            hasTime ? formattedParsed : deadline.toLocalDate()
+                                    .format(java.time.format.DateTimeFormatter.ofPattern(Task.DATE_FORMAT))
+                                    + " " + Task.DEFAULT_DEADLINE_TIME
+                    );
+                }
             } catch (IllegalArgumentException e) {
                 throw new ParseException(Task.DEADLINE_CONSTRAINTS);
             }
         }
 
         Task task = new Task(title, deadline);
-        return new AddTaskCommand(task);
+        return adjustmentNote == null ? new AddTaskCommand(task) : new AddTaskCommand(task, adjustmentNote);
     }
 }

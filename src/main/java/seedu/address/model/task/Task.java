@@ -89,13 +89,12 @@ public class Task {
     }
 
     /**
-     * Returns true if both tasks have the same title.
-     * This defines a weaker notion of equality between two tasks, used to identify
-     * duplicate tasks in the task list. Two tasks with the same title are considered
-     * the same task, regardless of their deadline or completion status.
+     * Returns true if both tasks have the same identity for duplicate detection.
+     * Two tasks are considered the same task if they have the same title AND the same deadline.
+     * This allows multiple tasks to share the same title as long as their deadlines differ.
      *
      * @param otherTask The other task to compare with
-     * @return true if both tasks have the same title, false otherwise
+     * @return true if both tasks have the same title and deadline, false otherwise
      */
     public boolean isSameTask(Task otherTask) {
         if (otherTask == this) {
@@ -103,7 +102,8 @@ public class Task {
         }
 
         return otherTask != null
-                && otherTask.getTitle().equals(getTitle());
+                && otherTask.getTitle().equals(getTitle())
+                && Objects.equals(otherTask.getDeadline(), getDeadline());
     }
 
     /**

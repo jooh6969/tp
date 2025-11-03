@@ -311,6 +311,8 @@ public class ModelManager implements Model {
             updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
             updateFilteredEventList(PREDICATE_SHOW_ALL_EVENTS);
             updateFilteredTaskList(PREDICATE_SHOW_ALL_TASKS);
+            // Synchronize budget field with the restored state
+            this.budget = addressBook.getBudget().orElse(null);
             logger.fine("Filtered lists updated. Remaining undo operations: " + addressBook.getUndoCount());
         } else {
             logger.warning("Undo failed - no operations to undo");
@@ -328,6 +330,8 @@ public class ModelManager implements Model {
             updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
             updateFilteredEventList(PREDICATE_SHOW_ALL_EVENTS);
             updateFilteredTaskList(PREDICATE_SHOW_ALL_TASKS);
+            // Synchronize budget field with the restored state
+            this.budget = addressBook.getBudget().orElse(null);
             logger.fine("Filtered lists updated. Remaining redo operations: " + addressBook.getRedoCount());
         } else {
             logger.warning("Redo failed - no operations to redo");

@@ -46,6 +46,8 @@ deactivate EditCommand
 EditCommandParser --> AddressBookParser : e
 deactivate EditCommandParser
 
+destroy EditCommandParser
+
 AddressBookParser --> LogicManager : e
 deactivate AddressBookParser
 
@@ -103,11 +105,12 @@ else
         CommandResult --> EditCommand
         deactivate CommandResult
 
+        deactivate EditCommand
         EditCommand --> LogicManager : r
     end
 end
 
-deactivate EditCommand
+
 
 LogicManager -> Storage : saveAddressBook(model.getAddressBook())
 activate Storage

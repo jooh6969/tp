@@ -86,8 +86,9 @@ public class Person {
     }
 
     /**
-     * Returns true if both persons have the same name.
-     * This defines a weaker notion of equality between two persons.
+     * Returns true if both persons have the same student number (case-insensitive).
+     * This defines identity for duplicate detection and uniqueness.
+     * Duplicate names are allowed; uniqueness is enforced on student numbers only.
      */
     public boolean isSamePerson(Person otherPerson) {
         if (otherPerson == this) {
@@ -95,7 +96,7 @@ public class Person {
         }
 
         return otherPerson != null
-                && otherPerson.getName().equals(getName());
+                && otherPerson.getStudentNumber().value.equalsIgnoreCase(getStudentNumber().value);
     }
 
     /**

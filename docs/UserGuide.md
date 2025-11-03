@@ -105,6 +105,8 @@ ClubHub validates your inputs before any change is applied. If a value fails val
 - **CSV imports** must include the compulsory columns; malformed rows are rejected with warnings.
 Tip: Most commands mention the exact field that failed validation so you can correct it quickly if you used the command wrongly.
 
+<br>
+
 ### Viewing help : `help`
 
 Shows a message explaining how to access the help page.
@@ -114,11 +116,18 @@ Shows a message explaining how to access the help page.
 Format: `help`
 
 
+<br>
+
 ### Adding a person: `add`
 
 Adds a person to the ClubHub.
 
 Format: `add n/NAME y/YEAR s/STUDENT_NUMBER e/EMAIL p/PHONE d/DIETARY_REQUIREMENTS r/ROLE [t/TAG]…​`
+
+<box type="info" seamless>
+
+**Note:** The NAME field should only contain alphanumeric characters and spaces. Special characters (such as `/`, `-`, `'`) are not allowed in names.
+</box>
 
 <box type="tip" seamless>
 
@@ -135,6 +144,8 @@ display format of member's contact in ClubHub:
 
 
 
+<br>
+
 ### Listing all persons : `list`
  
 Shows a list of all persons in the ClubHub.
@@ -143,6 +154,8 @@ Shows a list of all persons in the ClubHub.
 
 Format: `list`
 
+
+<br>
 
 ### Editing a person : `edit`
 
@@ -162,6 +175,8 @@ Examples:
 *  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
   ![result for 'edit 2' message](images/editBetsyCrower.png)
 
+<br>
+
 ### Locating persons by name: `find`
 
 Finds persons whose names contain any of the given keywords.
@@ -180,6 +195,8 @@ Examples:
 * `find vegetarian year 2 ` returns students who are both `vegetarian` and `year 2`
   ![result for 'find vegetarian year 2'](images/findVegYear2Result.png)
 
+<br>
+
 ### Deleting a person : `delete`
 
 Deletes the specified person from the ClubHub.
@@ -194,17 +211,23 @@ Examples:
 * `list` followed by `delete 2` deletes the 2nd person in the ClubHub.
 * `find Betsy` followed by `delete 1` deletes the 1st person in the results of the `find` command.
 
+<br>
+
 ### Clearing all entries : `clear`
 
 Clears all entries from the ClubHub.
   ![clear message](images/clearMessage.png)
 Format: `clear`
 
+<br>
+
 ### Exiting the program : `exit`
 
 Exits the program.
 
 Format: `exit`
+
+<br>
 
 ### Importing members : `import`
 
@@ -230,6 +253,8 @@ import /from FILEPATH
 
 ---
 
+<br>
+
 ### Exporting members : `export`
 
 Exports all members currently stored in ClubHub to a `.csv` file.  
@@ -250,6 +275,8 @@ export /to FILEPATH
 * Only `.csv` extensions are supported — specifying other file formats (e.g. `.pdf`, `.txt`) will result in an error.
 * The exported file will include all valid members in the following format:  
   `Name, Year, StudentNumber, Email, Phone, DietaryRequirements, Role, Tags`
+
+<br>
 
 ### Events : `addevent`, `deleteevent`
 
@@ -392,17 +419,15 @@ Formats:
 The Budget Tracker helps you manage club finances by setting a global budget for a specific date range and tracking expenses for individual events. This feature allows you to monitor spending against your allocated budget and see at a glance how much you've spent and how much remains.
 
 Formats:
-* `budget set a/AMOUNT from/YYYY-MM-DD to/YYYY-MM-DD` - Sets a global budget
-* `budget reset` - Clears the current budget
-* `budget report` - Displays the budget report
+* `budgetset a/AMOUNT from/YYYY-MM-DD to/YYYY-MM-DD` - Sets a global budget
+* `budgetreset` - Clears the current budget
+* `budgetreport` - Displays the budget report
 * `setexpense INDEX a/AMOUNT` - Sets the expense for an event (INDEX refers to the event's position in the event list)
 
-**Expense display:** When you add a new event, it initially shows $0.00 in the event list panel. This indicates that no expense has been set yet for that event. After you set an expense using `setexpense`, the expense amount will appear beside the event title in the event list panel. This allows you to quickly see the cost of each event at a glance. The expense is displayed in the format `$AMOUNT` (e.g., `$150.00`).
-
 Examples:
-* `budget set a/3000.00 from/2025-01-01 to/2025-12-31` - Sets a budget of $3000.00 for the year 2025
-* `budget reset` - Clears the current budget
-* `budget report` - Shows the budget report with total budget, expenses, and remaining amount
+* `budgetset a/3000.00 from/2025-01-01 to/2025-12-31` - Sets a budget of $3000.00 for the year 2025
+* `budgetreset` - Clears the current budget
+* `budgetreport` - Shows the budget report with total budget, expenses, and remaining amount
 * `setexpense 1 a/150.00` - Sets the expense for the event at index 1 (first event in the list) to $150.00. The expense will be displayed beside the event title in the UI.
 
 Notes:
@@ -410,6 +435,7 @@ Notes:
 * The report lists only events whose date is within the budget duration (inclusive).
 * The `INDEX` in `setexpense` refers to the event's position in the displayed event list (starting from 1).
 * The remaining budget can be negative if total expenses exceed the budget amount, indicating overspending.
+* Expense display: When you add a new event, it initially shows $0.00 in the event list panel. This indicates that no expense has been set yet for that event. After you set an expense using the `setexpense` command, the expense amount will appear beside the event title in the event list panel. This allows you to quickly see the cost of each event at a glance.
 * The report format is:
 
 ```
@@ -475,16 +501,16 @@ export /to data/members.csv
 
 ## Command summary
 
-Action     | Format, Examples
+Action     | Format
 -----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-**Add**    | `add n/NAME y/YEAR s/STUDENT_NUMBER e/EMAIL p/PHONE d/DIETARY r/ROLE [t/TAG]…​` <br> e.g., `add n/John Doe y/3 s/A1234567X e/johnd@example.com p/98765432 d/Vegetarian r/President`
+**Add**    | `add n/NAME y/YEAR s/STUDENT_NUMBER e/EMAIL p/PHONE d/DIETARY r/ROLE [t/TAG]…​` 
 **Clear**  | `clear`
-**Delete** | `delete INDEX`<br> e.g., `delete 3`
-**Edit**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [y/YEAR] [s/STUDENT_NUMBER] [d/DIETARY] [r/ROLE] [t/TAG]…​`<br> e.g.,`edit 2 n/Betsy Crower t/`
-**Find**   | `find KEYWORD [MORE_KEYWORDS]`<br> e.g., `find James Jake`
+**Delete** | `delete INDEX`
+**Edit**   | `edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [y/YEAR] [s/STUDENT_NUMBER] [d/DIETARY] [r/ROLE] [t/TAG]…​`
+**Find**   | `find KEYWORD [MORE_KEYWORDS]`
 **List**   | `list`
-**Import** | `import /from FILEPATH`<br> e.g., `import /from members.csv`
-**Export** | `export /to FILEPATH`<br> e.g., `export /to members.csv`
+**Import** | `import /from FILEPATH`
+**Export** | `export /to FILEPATH`
 **Attendance** | `addattendance e/EVENTID m/MEMBER[/MEMBER]...`<br> `markattendance e/EVENTID m/MEMBER[/MEMBER]...`<br> `unmarkattendance e/EVENTID m/MEMBER[/MEMBER]...`<br> `removeattendance e/EVENTID m/MEMBER[/MEMBER]...`<br> `viewattendees e/EVENTID`<br> `showattendance e/EVENTID`
 **Events** | `addevent e/EVENTID dt/DATE desc/DESC`<br> `deleteevent e/EVENTID`
 **Tasks**  | `addtask TITLE [dl/DEADLINE]`, `deletetask INDEX`, `marktask INDEX`, `unmarktask INDEX`

@@ -89,16 +89,17 @@ public class EditCommand extends Command {
         Person personToEdit = lastShownList.get(index.getZeroBased());
         Person editedPerson = createEditedPerson(personToEdit, editPersonDescriptor);
 
-        if (!personToEdit.isSamePerson(editedPerson) && model.hasPerson(editedPerson)) {
-            throw new CommandException(MESSAGE_DUPLICATE_PERSON);
-        }
-
         // Check if student number is being changed and if the new student number already exists
         StudentNumber editedStudentNumber = editPersonDescriptor.getStudentNumber()
                 .orElse(personToEdit.getStudentNumber());
         if (!personToEdit.getStudentNumber().equals(editedStudentNumber)
                 && model.hasStudentNumber(editedStudentNumber)) {
             throw new CommandException(MESSAGE_DUPLICATE_STUDENT_NUMBER);
+        }
+
+        // Then check for duplicate person identity
+        if (!personToEdit.isSamePerson(editedPerson) && model.hasPerson(editedPerson)) {
+            throw new CommandException(MESSAGE_DUPLICATE_PERSON);
         }
 
         model.setPerson(personToEdit, editedPerson);

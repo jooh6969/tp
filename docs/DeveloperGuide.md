@@ -304,7 +304,7 @@ The sequence diagram below illustrates the interactions within the `Logic` compo
 
 <box type="info" seamless>
 
-**Note:** The lifeline for `EditCommandParser` should end at the destroy marker (X) but due to a limitation of PlantUML, the lifeline continues till the end of diagram.
+**Note:** The lifeline for `EditCommandParser` now correctly ends at the destroy marker (X) in the diagram below.
 
 </box>
 
@@ -389,7 +389,6 @@ How the attendance feature works:
 10. The updated address book is saved to storage.
 
 Other attendance related features (`markattendance`, `unmarkattendance`, `removeAttendees`) work in a similar way and are also undoable.
---------------------------------------------------------------------------------------------------------------------
 
 ## **Documentation, logging, testing, configuration, dev-ops**
 
@@ -401,9 +400,8 @@ Other attendance related features (`markattendance`, `unmarkattendance`, `remove
 
 --------------------------------------------------------------------------------------------------------------------
 
-## **Appendix: Requirements**
+## **Appendix: Product Scope**
 
-### Product scope
 
 ## Target User Profile
 
@@ -469,7 +467,7 @@ For all use cases below, the **System** is `ClubHub` and the **Actor** is the **
 
 **MSS (Main Success Scenario):**
 1. Secretary chooses to add a member.
-2. ClubHub requests name, year, role, dietary requirements, student number, phone number(above compulsory).
+2. ClubHub requests name, year, role, dietary requirements, student number, phone number(above are compulsory).
 3. Secretary enters the requested details.
 4. ClubHub validates inputs and creates the member record.
 5. ClubHub displays confirmation and the updated member list.
@@ -480,9 +478,6 @@ For all use cases below, the **System** is `ClubHub` and the **Actor** is the **
     - 3a1. ClubHub displays an error message and usage hint.
     - 3a2. Secretary re-enters data.
     - Use case resumes from step 4.
-- *a. At any time, Secretary cancels.
-    - *a1. ClubHub asks to confirm cancellation.
-    - *a2. Secretary confirms.
     - Use case ends.
 
 ---
@@ -646,9 +641,6 @@ For all use cases below, the **System** is `ClubHub` and the **Actor** is the **
 **Extensions:**
 - 2a. Event not found.
     - 2a1. ClubHub displays an error message.
-    - Use case ends.
-- *a. Secretary cancels at confirmation.
-    - *a1. ClubHub cancels deletion.
     - Use case ends.
 
 ---
