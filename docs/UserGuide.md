@@ -419,15 +419,15 @@ Formats:
 The Budget Tracker helps you manage club finances by setting a global budget for a specific date range and tracking expenses for individual events. This feature allows you to monitor spending against your allocated budget and see at a glance how much you've spent and how much remains.
 
 Formats:
-* `budget set a/AMOUNT from/YYYY-MM-DD to/YYYY-MM-DD` - Sets a global budget
+* `budgetset a/AMOUNT from/YYYY-MM-DD to/YYYY-MM-DD` - Sets a global budget
 * `budget reset` - Clears the current budget
-* `budget report` - Displays the budget report
+* `budgetreport` - Displays the budget report
 * `setexpense INDEX a/AMOUNT` - Sets the expense for an event (INDEX refers to the event's position in the event list)
 
 Examples:
-* `budget set a/3000.00 from/2025-01-01 to/2025-12-31` - Sets a budget of $3000.00 for the year 2025
-* `budget reset` - Clears the current budget
-* `budget report` - Shows the budget report with total budget, expenses, and remaining amount
+* `budgetset a/3000.00 from/2025-01-01 to/2025-12-31` - Sets a budget of $3000.00 for the year 2025
+* `budgetreset` - Clears the current budget
+* `budgetreport` - Shows the budget report with total budget, expenses, and remaining amount
 * `setexpense 1 a/150.00` - Sets the expense for the event at index 1 (first event in the list) to $150.00. The expense will be displayed beside the event title in the UI.
 
 Notes:
