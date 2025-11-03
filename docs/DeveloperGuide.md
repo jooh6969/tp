@@ -374,7 +374,7 @@ The sequence diagram below illustrates how attendance is added for an event:
 
 The activity diagram below summarizes the flow when adding attendance:
 
-<puml src="diagrams/AttendanceActivity.puml" width="500" alt="Activity Diagram for Adding Attendance" />
+<puml src="diagrams/AttendanceActivity.puml" width="550" alt="Activity Diagram for Adding Attendance" />
 
 How the attendance feature works:
 1. When the user enters an `addattendance` command with an event ID and member names, `LogicManager` passes it to `AddressBookParser`.

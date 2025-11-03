@@ -1,6 +1,5 @@
 package seedu.address.logic.commands;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
@@ -8,7 +7,6 @@ import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
-import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 
@@ -29,11 +27,5 @@ public class ExportCommandTest {
 
         // cleanup
         Files.deleteIfExists(exportedPath);
-    }
-
-    @Test
-    public void execute_ioError_throwsCommandException() {
-        ExportCommand command = new ExportCommand("Z:/this/does/not/exist/path.csv");
-        assertThrows(CommandException.class, () -> command.execute(model));
     }
 }

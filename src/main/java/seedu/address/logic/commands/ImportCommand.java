@@ -3,7 +3,6 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
-import java.util.List;
 
 import seedu.address.commons.util.CsvManager;
 import seedu.address.commons.util.ToStringBuilder;
@@ -23,8 +22,10 @@ public class ImportCommand extends Command {
         + "Format: " + COMMAND_WORD + " [/from FILEPATH]\n"
         + "Example: " + COMMAND_WORD + " /from members.csv";
 
-    public static final String MESSAGE_SUCCESS = "Import complete: %1$d members added.";
+    public static final String MESSAGE_SUCCESS = "Import complete: %1$d member(s) added.";
     public static final String MESSAGE_FAILURE = "Failed to import members: %1$s";
+    public static final String MESSAGE_INVALID_FILETYPE =
+        "Invalid file format. Only .csv files are supported. Example: import /from members.csv";
 
     private final String filePath;
 
@@ -39,18 +40,45 @@ public class ImportCommand extends Command {
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
 
-        try {
-            List<Person> imported = CsvManager.importPersons(filePath);
-            int addedCount = 0;
+        // ===== File type validation =====
+        if (filePath != null && !filePath.trim().isEmpty()) {
+            String lowerPath = filePath.toLowerCase();
+            if (!lowerPath.endsWith(".csv")) {
+                throw new CommandException(MESSAGE_INVALID_FILETYPE);
+            }
+        }
 
-            for (Person person : imported) {
-                if (!model.hasPerson(person)) {
+        try {
+            CsvManager.ImportResult result = CsvManager.importPersons(filePath);
+
+            int addedCount = 0;
+            int duplicateCount = 0;
+
+            for (Person person : result.persons) {
+                if (model.hasPerson(person)) {
+                    duplicateCount++;
+                } else {
                     model.addPerson(person);
                     addedCount++;
                 }
             }
 
-            return new CommandResult(String.format(MESSAGE_SUCCESS, addedCount));
+            StringBuilder message = new StringBuilder();
+            message.append(String.format(MESSAGE_SUCCESS, addedCount));
+
+            if (duplicateCount > 0) {
+                message.append(String.format(
+                    "\n\nNote: %d existing member(s) were skipped as duplicates.",
+                    duplicateCount));
+            }
+
+            // keep your existing errorSummary logic untouched
+            if (!result.errorSummary.isEmpty()) {
+                message.append("\n\nSome entries were skipped due to invalid data.\n");
+                message.append(result.errorSummary);
+            }
+
+            return new CommandResult(message.toString());
 
         } catch (IOException e) {
             throw new CommandException(String.format(MESSAGE_FAILURE, e.getMessage()));
@@ -79,5 +107,7 @@ public class ImportCommand extends Command {
             .toString();
     }
 }
+
+
 
 
