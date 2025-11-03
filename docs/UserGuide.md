@@ -420,7 +420,7 @@ The Budget Tracker helps you manage club finances by setting a global budget for
 
 Formats:
 * `budgetset a/AMOUNT from/YYYY-MM-DD to/YYYY-MM-DD` - Sets a global budget
-* `budget reset` - Clears the current budget
+* `budgetreset` - Clears the current budget
 * `budgetreport` - Displays the budget report
 * `setexpense INDEX a/AMOUNT` - Sets the expense for an event (INDEX refers to the event's position in the event list)
 
