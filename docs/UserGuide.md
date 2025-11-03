@@ -105,6 +105,8 @@ ClubHub validates your inputs before any change is applied. If a value fails val
 - **CSV imports** must include the compulsory columns; malformed rows are rejected with warnings.
 Tip: Most commands mention the exact field that failed validation so you can correct it quickly if you used the command wrongly.
 
+<br>
+
 ### Viewing help : `help`
 
 Shows a message explaining how to access the help page.
@@ -113,6 +115,8 @@ Shows a message explaining how to access the help page.
 
 Format: `help`
 
+
+<br>
 
 ### Adding a person: `add`
 
@@ -140,6 +144,8 @@ display format of member's contact in ClubHub:
 
 
 
+<br>
+
 ### Listing all persons : `list`
  
 Shows a list of all persons in the ClubHub.
@@ -148,6 +154,8 @@ Shows a list of all persons in the ClubHub.
 
 Format: `list`
 
+
+<br>
 
 ### Editing a person : `edit`
 
@@ -167,6 +175,8 @@ Examples:
 *  `edit 2 n/Betsy Crower t/` Edits the name of the 2nd person to be `Betsy Crower` and clears all existing tags.
   ![result for 'edit 2' message](images/editBetsyCrower.png)
 
+<br>
+
 ### Locating persons by name: `find`
 
 Finds persons whose names contain any of the given keywords.
@@ -185,6 +195,8 @@ Examples:
 * `find vegetarian year 2 ` returns students who are both `vegetarian` and `year 2`
   ![result for 'find vegetarian year 2'](images/findVegYear2Result.png)
 
+<br>
+
 ### Deleting a person : `delete`
 
 Deletes the specified person from the ClubHub.
@@ -199,17 +211,23 @@ Examples:
 * `list` followed by `delete 2` deletes the 2nd person in the ClubHub.
 * `find Betsy` followed by `delete 1` deletes the 1st person in the results of the `find` command.
 
+<br>
+
 ### Clearing all entries : `clear`
 
 Clears all entries from the ClubHub.
   ![clear message](images/clearMessage.png)
 Format: `clear`
 
+<br>
+
 ### Exiting the program : `exit`
 
 Exits the program.
 
 Format: `exit`
+
+<br>
 
 ### Importing members : `import`
 
@@ -220,6 +238,8 @@ Format: `import /from FILEPATH`
 Examples:
 * `import /from members.csv`
 
+<br>
+
 ### Exporting members : `export`
 
 Exports all members in the ClubHub to a CSV file.
@@ -228,6 +248,8 @@ Format: `export /to FILEPATH`
 
 Examples:
 * `export /to members.csv`
+
+<br>
 
 ### Events : `addevent`, `deleteevent`
 
