@@ -33,7 +33,10 @@ public class ExportCommandTest {
 
     @Test
     public void execute_ioError_throwsCommandException() {
-        ExportCommand command = new ExportCommand("Z:/this/does/not/exist/path.csv");
+        // This path will fail on both macOS and Windows
+        ExportCommand command = new ExportCommand("/root/this/should/fail/members.csv");
+
         assertThrows(CommandException.class, () -> command.execute(model));
     }
+
 }

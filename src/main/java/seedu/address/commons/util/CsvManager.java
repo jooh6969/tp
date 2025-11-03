@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -49,13 +47,14 @@ public class CsvManager {
 
         // Determine file path
         if (optionalPath == null || optionalPath.trim().isEmpty()) {
-            String defaultName = "members_export_"
-                + LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"))
-                + ".csv";
-            filePath = Paths.get(defaultName);
+            filePath = Paths.get("members.csv");
         } else {
             filePath = Paths.get(optionalPath);
+        }
+
+        // Create parent directory (if missing)
+        if (filePath.getParent() != null) {
+            Files.createDirectories(filePath.getParent());
         }
 
         // Create file if missing
@@ -109,23 +108,30 @@ public class CsvManager {
      * @return the list of imported Person objects
      * @throws IOException if reading fails or file not found
      */
-    public static List<Person> importPersons(String optionalPath) throws IOException {
+    public static ImportResult importPersons(String optionalPath) throws IOException {
         Path filePath;
 
         if (optionalPath == null || optionalPath.trim().isEmpty()) {
-            filePath = Paths.get("members_import.csv");
-            if (!Files.exists(filePath)) {
-                throw new FileNotFoundException(
-                    "No import file specified and 'members_import.csv' not found.");
-            }
+            filePath = Paths.get("members.csv");
         } else {
             filePath = Paths.get(optionalPath);
-            if (!Files.exists(filePath)) {
-                throw new FileNotFoundException("CSV file not found: " + filePath);
-            }
+        }
+
+        if (!Files.exists(filePath)) {
+            throw new FileNotFoundException("CSV file not found: " + filePath);
         }
 
         List<Person> persons = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
+        Set<String> seenStudentNumbers = new HashSet<>();
+        Set<String> seenPhones = new HashSet<>();
+
+        // Validation patterns (from User Guide)
+        final String nameRegex = "^[A-Za-z ]+$";
+        final String studentRegex = "^[A-Za-z]\\d{7}[A-Za-z]$";
+        final String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        final String phoneRegex = "^\\d{8}$";
+        final Set<String> validYears = Set.of("1", "2", "3", "4", "Year 1", "Year 2", "Year 3", "Year 4");
 
         try (BufferedReader reader = Files.newBufferedReader(filePath)) {
             String line = reader.readLine(); // skip header
@@ -133,28 +139,83 @@ public class CsvManager {
                 throw new IOException("CSV file is empty.");
             }
 
+            int lineNumber = 1;
             while ((line = reader.readLine()) != null) {
+                lineNumber++;
                 if (line.trim().isEmpty()) {
                     continue;
                 }
 
                 String[] parts = line.split(",", -1);
-
-                // Merge extra parts (in case tags contain commas)
-                if (parts.length > 8) {
-                    parts = mergeTrailing(parts, 8);
+                if (parts.length < 8) {
+                    errors.add("Line " + lineNumber + ": Missing required columns.");
+                    continue;
                 }
 
-                // Graceful defaults
-                String nameStr = getOrDefault(parts, 0, "Unknown");
-                String yearStr = getOrDefault(parts, 1, "N/A");
-                String studentNoStr = getOrDefault(parts, 2, "N/A");
-                String emailStr = getOrDefault(parts, 3, "N/A");
-                String phoneStr = getOrDefault(parts, 4, "00000000");
-                String dietStr = getOrDefault(parts, 5, "None");
-                String roleStr = getOrDefault(parts, 6, "Unassigned");
-                String tagsStr = getOrDefault(parts, 7, "");
+                String nameStr = getOrDefault(parts, 0, "").trim();
+                String yearStr = getOrDefault(parts, 1, "").trim();
+                String studentNoStr = getOrDefault(parts, 2, "").trim();
+                String emailStr = getOrDefault(parts, 3, "").trim();
+                String phoneStr = getOrDefault(parts, 4, "").trim();
+                String dietStr = getOrDefault(parts, 5, "").trim();
+                String roleStr = getOrDefault(parts, 6, "").trim();
+                String tagsStr = getOrDefault(parts, 7, "").trim();
 
+                boolean valid = true;
+
+                // ===== Field Validation =====
+                if (nameStr.isEmpty() || !nameStr.matches(nameRegex)) {
+                    errors.add("Line " + lineNumber + ": Invalid name (" + nameStr + ")");
+                    valid = false;
+                }
+
+                if (yearStr.isEmpty() || !validYears.contains(yearStr)) {
+                    errors.add("Line " + lineNumber + ": Invalid year (" + yearStr + ")");
+                    valid = false;
+                }
+
+                if (!studentNoStr.matches(studentRegex)) {
+                    errors.add("Line " + lineNumber + ": Invalid student number (" + studentNoStr + ")");
+                    valid = false;
+                } else if (seenStudentNumbers.contains(studentNoStr)) {
+                    errors.add("Line " + lineNumber + ": Duplicate student number (" + studentNoStr + ")");
+                    valid = false;
+                }
+
+                if (!emailStr.matches(emailRegex)) {
+                    errors.add("Line " + lineNumber + ": Invalid email (" + emailStr + ")");
+                    valid = false;
+                }
+
+                if (!phoneStr.matches(phoneRegex)) {
+                    errors.add("Line " + lineNumber + ": Invalid phone number (" + phoneStr + ")");
+                    valid = false;
+                } else if (seenPhones.contains(phoneStr)) {
+                    errors.add("Line " + lineNumber + ": Duplicate phone number (" + phoneStr + ")");
+                    valid = false;
+                }
+
+                if (dietStr.isEmpty()) {
+                    errors.add("Line " + lineNumber + ": Missing dietary requirements.");
+                    valid = false;
+                } else if (!dietStr.matches("^[A-Za-z ]+$")) {
+                    errors.add("Line " + lineNumber + ": Invalid role (" + roleStr + ")");
+                    valid = false;
+                }
+
+                if (roleStr.isEmpty()) {
+                    errors.add("Line " + lineNumber + ": Missing role.");
+                    valid = false;
+                } else if (!roleStr.matches("^[A-Za-z ]+$")) {
+                    errors.add("Line " + lineNumber + ": Invalid role (" + roleStr + ")");
+                    valid = false;
+                }
+
+                if (!valid) {
+                    continue; // skip this line entirely
+                }
+
+                // ===== Construct Valid Person =====
                 try {
                     Person p = new Person(
                         new Name(nameStr),
@@ -167,17 +228,27 @@ public class CsvManager {
                         parseTags(tagsStr)
                     );
                     persons.add(p);
+                    seenStudentNumbers.add(studentNoStr);
+                    seenPhones.add(phoneStr);
                 } catch (Exception e) {
-                    System.out.println("Warning: Skipped malformed line: " + line);
-                    e.printStackTrace();
+                    errors.add("Line " + lineNumber + ": Error creating person (" + e.getMessage() + ")");
                 }
             }
         }
 
-        System.out.println("Import complete: " + persons.size()
-            + " members loaded from " + filePath);
-        return persons;
+        // ===== Build summary string =====
+        String errorSummary = "";
+        if (!errors.isEmpty()) {
+            errorSummary = "Skipped " + errors.size() + " invalid line(s):\n" + String.join("\n", errors);
+            System.out.println(errorSummary);
+        }
+
+        System.out.println("Import finished: " + persons.size() + " valid entries loaded from " + filePath);
+
+        return new ImportResult(persons, errorSummary);
     }
+
+
 
     // ===== Helper Methods =====
 
@@ -234,6 +305,24 @@ public class CsvManager {
         merged[expectedLength - 1] = String.join(",", Arrays.copyOfRange(arr, expectedLength - 1, arr.length));
         return merged;
     }
+
+    /**
+     * Represents the result of an import operation, containing the successfully
+     * parsed persons and a summary of any errors encountered.
+     */
+    public static class ImportResult {
+        public final List<Person> persons;
+        public final String errorSummary;
+
+        /**
+         * Creates an ImportResult object with the provided list of persons and error summary.
+         */
+        public ImportResult(List<Person> persons, String errorSummary) {
+            this.persons = persons;
+            this.errorSummary = errorSummary;
+        }
+    }
+
 }
 
 

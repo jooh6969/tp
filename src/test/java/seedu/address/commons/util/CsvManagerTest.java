@@ -73,7 +73,7 @@ public class CsvManagerTest {
     public void exportPersons_nullPath_createsTimestampedFile() throws Exception {
         Path exportedFile = CsvManager.exportPersons(List.of(samplePerson), null);
         assertTrue(Files.exists(exportedFile));
-        assertTrue(exportedFile.getFileName().toString().startsWith("members_export_"));
+        assertTrue(exportedFile.getFileName().toString().startsWith("members"));
         Files.deleteIfExists(exportedFile);
     }
 
@@ -84,23 +84,39 @@ public class CsvManagerTest {
             writer.write("John Doe,1,A1234567X,john@example.com,98765432,None,Member,logistics\n");
         }
 
-        List<Person> persons = CsvManager.importPersons(TEST_IMPORT_PATH.toString());
+        CsvManager.ImportResult result = CsvManager.importPersons(TEST_IMPORT_PATH.toString());
+        List<Person> persons = result.persons;
+
         assertEquals(1, persons.size());
         assertEquals("John Doe", persons.get(0).getName().toString());
         assertEquals("A1234567X", persons.get(0).getStudentNumber().toString());
+        assertTrue(result.errorSummary.isEmpty()); // optional sanity check
     }
+
 
     @Test
     public void importPersons_noFileSpecifiedButDefaultExists_readsDefaultFile() throws Exception {
-        try (BufferedWriter writer = Files.newBufferedWriter(Path.of("members_import.csv"))) {
+        // Write a valid default CSV file (the importer looks for "members.csv")
+        Path defaultFile = Path.of("members.csv");
+        try (BufferedWriter writer = Files.newBufferedWriter(defaultFile)) {
             writer.write("Name,Year,StudentNumber,Email,Phone,DietaryRequirements,Role,Tags\n");
             writer.write("Jane Tan,2,A7654321Z,jane@example.com,91234567,None,President,leadership\n");
         }
 
-        List<Person> persons = CsvManager.importPersons(null);
+        // Run the import with null path (should pick up "members.csv")
+        CsvManager.ImportResult result = CsvManager.importPersons(null);
+        List<Person> persons = result.persons;
+
+        // Verify the result
         assertEquals(1, persons.size());
         assertEquals("Jane Tan", persons.get(0).getName().toString());
+        assertTrue(result.errorSummary.isEmpty()); // sanity check
+
+        // Clean up
+        Files.deleteIfExists(defaultFile);
     }
+
+
 
     @Test
     public void importPersons_missingFile_throwsIoException() {
@@ -108,9 +124,16 @@ public class CsvManagerTest {
     }
 
     @Test
-    public void importPersons_noFileSpecifiedAndDefaultMissing_throwsIoException() {
+    public void importPersons_noFileSpecifiedAndDefaultMissing_throwsIoException() throws IOException {
+        Path defaultFile = Path.of("members.csv");
+
+        // Ensure the default file does NOT exist
+        Files.deleteIfExists(defaultFile);
+
+        // Expect an IOException because the default file is missing
         assertThrows(IOException.class, () -> CsvManager.importPersons(null));
     }
+
 
     @Test
     public void importPersons_emptyCsv_returnsEmptyList() throws Exception {
@@ -118,7 +141,12 @@ public class CsvManagerTest {
             writer.write("Name,Year,StudentNumber,Email,Phone,DietaryRequirements,Role,Tags\n");
         }
 
-        List<Person> persons = CsvManager.importPersons(TEST_IMPORT_PATH.toString());
+        CsvManager.ImportResult result = CsvManager.importPersons(TEST_IMPORT_PATH.toString());
+        List<Person> persons = result.persons;
+
         assertTrue(persons.isEmpty());
+        // Optionally check no errors
+        assertTrue(result.errorSummary.isEmpty());
     }
+
 }

@@ -26,6 +26,8 @@ public class ExportCommand extends Command {
 
     public static final String MESSAGE_SUCCESS = "Export successful: %1$s";
     public static final String MESSAGE_FAILURE = "Failed to export members: %1$s";
+    public static final String MESSAGE_INVALID_FILETYPE =
+        "Invalid file format. Only .csv files are supported. Example: export /to members.csv";
 
     private final String filePath;
 
@@ -39,6 +41,15 @@ public class ExportCommand extends Command {
     @Override
     public CommandResult execute(Model model) throws CommandException {
         requireNonNull(model);
+
+        // ===== File path validation =====
+        if (filePath != null && !filePath.trim().isEmpty()) {
+            String lowerPath = filePath.toLowerCase();
+            if (!lowerPath.endsWith(".csv")) {
+                throw new CommandException(MESSAGE_INVALID_FILETYPE);
+            }
+        }
+
         List<Person> persons = model.getFilteredPersonList();
 
         try {
@@ -71,4 +82,5 @@ public class ExportCommand extends Command {
             .toString();
     }
 }
+
 

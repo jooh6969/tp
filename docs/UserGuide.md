@@ -208,21 +208,48 @@ Format: `exit`
 
 ### Importing members : `import`
 
-Imports member details from a CSV file into the ClubHub. The imported members will be **added to** the existing contact list; this command does not replace existing data.
+Imports member details from a `.csv` file into ClubHub.  
+The imported members will be **added to** the existing contact list — this command does **not** replace or clear existing data.
 
-Format: `import /from FILEPATH`
+* ClubHub automatically skips duplicate members based on identical Student Numbers or Phone Numbers.
+* Malformed or invalid entries in the `.csv` file will be **skipped**, and a summary of which lines failed to import will be shown.
+* Only `.csv` files are supported — other file types (e.g. `.pdf`, `.txt`) will be rejected.
 
-Examples:
+**Format:**  
+import /from FILEPATH
+
+**Examples:**
 * `import /from members.csv`
+* `import /from data/backup/members_2025.csv`
+
+**Notes:**
+* If no file path is specified, ClubHub will look for a file named `members.csv` in the same directory as the application.
+* When a file contains both valid and invalid rows, the valid members will still be imported, and a summary of skipped entries will be displayed.
+* Ensure that all required columns are present in your `.csv` file:  
+  `Name, Year, StudentNumber, Email, Phone, DietaryRequirements, Role, Tags`
+
+---
 
 ### Exporting members : `export`
 
-Exports all members in the ClubHub to a CSV file.
+Exports all members currently stored in ClubHub to a `.csv` file.  
+This is useful for creating backups or transferring member data between devices.
 
-Format: `export /to FILEPATH`
+**Format:**  
+export /to FILEPATH
 
-Examples:
+**Examples:**
 * `export /to members.csv`
+* `export /to data/exports/members_backup.csv`
+
+**Notes:**
+* If no file path is specified, the exported data will be saved as `members.csv` in the same directory as the ClubHub application.
+* The `.csv` file will **overwrite** any existing file with the same name.
+    - Ensure that you do **not** specify a file path that points to any important or system-related files.
+    - If you wish to preserve previous exports, use a different file name (e.g. `members_backup.csv`).
+* Only `.csv` extensions are supported — specifying other file formats (e.g. `.pdf`, `.txt`) will result in an error.
+* The exported file will include all valid members in the following format:  
+  `Name, Year, StudentNumber, Email, Phone, DietaryRequirements, Role, Tags`
 
 ### Events : `addevent`, `deleteevent`
 
