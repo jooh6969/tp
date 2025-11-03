@@ -8,17 +8,17 @@ start
 :User executes command;
 :Parse command;
 
-if (Command modifies address book?) then (yes)
+if () then ([Command modifies address book])
   :Commit current state\n(Model#commit());
   :Execute command;
-  if (Command execution successful?) then (yes)
+  if () then ([Command execution successful])
     :Save to storage;
     :Return CommandResult;
-  else (no)
+  else ([else])
     :Rollback last commit\n(Model#rollbackLastCommit());
     :Throw CommandException;
   endif
-else (no)
+else ([else])
   :Execute command;
   :Return CommandResult;
   note right
