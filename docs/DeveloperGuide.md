@@ -679,7 +679,7 @@ For all use cases below, the **System** is `ClubHub` and the **Actor** is the **
     - 2a1. ClubHub displays an error message.
     - 2a2. Secretary corrects file and retries.
 - 2b. Duplicate entries in import file.
-    - 2b1. ClubHub prompts whether to update or skip.
+    - 2b1. ClubHub informs user that the malformed line has been skipped.
     - Use case resumes from step 2.
 
 ---
