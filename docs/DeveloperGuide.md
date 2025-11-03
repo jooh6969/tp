@@ -400,9 +400,8 @@ Other attendance related features (`markattendance`, `unmarkattendance`, `remove
 
 --------------------------------------------------------------------------------------------------------------------
 
-## **Appendix: Requirements**
+## **Appendix: Product Scope**
 
-### Product scope
 
 ## Target User Profile
 
@@ -468,7 +467,7 @@ For all use cases below, the **System** is `ClubHub` and the **Actor** is the **
 
 **MSS (Main Success Scenario):**
 1. Secretary chooses to add a member.
-2. ClubHub requests name, year, role, dietary requirements, student number, phone number(above compulsory) and telegram handle(optional).
+2. ClubHub requests name, year, role, dietary requirements, student number, phone number(aobve are compulsory).
 3. Secretary enters the requested details.
 4. ClubHub validates inputs and creates the member record.
 5. ClubHub displays confirmation and the updated member list.
